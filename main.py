@@ -35,13 +35,6 @@ async def on_message(message):
 
         await message.channel.send(mocked_message)
         logger.info("Message Mocked ('" + mocked_message + "')")
-    
-    # testing code
-    '''
-    if message.content.startswith('$whoami'):
-        await message.channel.send('Hello!' + str(message.author))
-        await message.channel.send(str(message.author.roles))
-    '''
 
 @client.event
 async def on_message_edit(before, after):
@@ -56,16 +49,6 @@ async def on_message_edit(before, after):
         
         # Get the messages after the edited message (so we can find our spongebot response)
         # see docs here https://discordpy.readthedocs.io/en/latest/api.html#discord.TextChannel.history
-        
-        '''
-        responses = await before.channel.history(limit=5, after=before).flatten()
-        
-        for response in responses:
-            if response.author == client.user:
-                spongebot_response = response
-                break
-
-        '''
         async for response in before.channel.history(limit=5, after=before):
             if response.author == client.user:
                 spongebot_response = response

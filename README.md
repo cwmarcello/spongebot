@@ -1,0 +1,2 @@
+# spongebot
+Spongebot for Discord

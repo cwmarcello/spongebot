@@ -29,12 +29,13 @@ async def on_message(message):
         return
 
     # Check if a user has the "mocked" role and if so respond
-    if "mocked" in [role.name.lower() for role in message.author.roles]:      
-        logger.info("Detected mockable message from user: " + message.author.name)
-        mocked_message = mock_string(message.content)
+    if "mocked" in [role.name.lower() for role in message.author.roles]:
+        if message.content != '':      
+            logger.info("Detected mockable message from user: " + message.author.name)
+            mocked_message = mock_string(message.content)
 
-        await message.channel.send(mocked_message)
-        logger.info("Message Mocked ('" + mocked_message + "')")
+            await message.channel.send(mocked_message)
+            logger.info("Message Mocked ('" + mocked_message + "')")
 
 @client.event
 async def on_message_edit(before, after):
@@ -44,22 +45,23 @@ async def on_message_edit(before, after):
 
     # checks if the person editing the message is to be mocked
     if "mocked" in [role.name.lower() for role in after.author.roles]:
-        logger.info("Detected edit of mocked message from user: " + after.author.name + ", remocking")
-        remocked_message = mock_string(after.content) # create the mock of the edit
-        
-        # Get the messages after the edited message (so we can find our spongebot response)
-        # see docs here https://discordpy.readthedocs.io/en/latest/api.html#discord.TextChannel.history
-        async for response in before.channel.history(limit=5, after=before):
-            if response.author == client.user:
-                spongebot_response = response
-                break
-        else:
-            logger.warn("Spongebot response not found, something went wrong")
-            return 
+        if before.content != '':
+            logger.info("Detected edit of mocked message from user: " + after.author.name + ", remocking")
+            remocked_message = mock_string(after.content) # create the mock of the edit
             
-        logger.debug(spongebot_response.content)
-        await spongebot_response.edit(content=remocked_message)
-        logger.info("Edited Message re-mocked ('" + remocked_message + "')")
+            # Get the messages after the edited message (so we can find our spongebot response)
+            # see docs here https://discordpy.readthedocs.io/en/latest/api.html#discord.TextChannel.history
+            async for response in before.channel.history(limit=5, after=before):
+                if response.author == client.user:
+                    spongebot_response = response
+                    break
+            else:
+                logger.warning("Spongebot response not found, something went wrong")
+                return 
+                
+            logger.debug(spongebot_response.content)
+            await spongebot_response.edit(content=remocked_message)
+            logger.info("Edited Message re-mocked ('" + remocked_message + "')")
 
 @client.event
 async def on_message_delete(message):
@@ -67,29 +69,33 @@ async def on_message_delete(message):
     if message.author == client.user:
         return
     
-    if "mocked" in [role.name.lower() for role in message.author.roles]:      
-        logger.info("Detected deletion of mocked message from user: " + message.author.name)
+    if "mocked" in [role.name.lower() for role in message.author.roles]:
+        if message.content != '':      
+            logger.info("Detected deletion of mocked message from user: " + message.author.name)
 
-        # Get the messages after the edited message (so we can find our spongebot response)
-        # see docs here https://discordpy.readthedocs.io/en/latest/api.html#discord.TextChannel.history
-        async for response in message.channel.history(limit=5, after=message):
-            if response.author == client.user:
-                spongebot_response = response
-                break
-        else:
-            logger.warn("Spongebot response not found, something went wrong")
-            return 
+            # Get the messages after the edited message (so we can find our spongebot response)
+            # see docs here https://discordpy.readthedocs.io/en/latest/api.html#discord.TextChannel.history
+            async for response in message.channel.history(limit=5, after=message):
+                if response.author == client.user:
+                    spongebot_response = response
+                    break
+            else:
+                logger.warning("Spongebot response not found, something went wrong. Maybe they deleted a message with no content?")
+                return 
 
-        edit_messages = ["You think you're so clever, deleting your message.",
-                        "Did you really think deleting your message would save you?",
-                        "Yeah you better take that back.",
-                        mock_string(f"My name is {message.author.name} and I delete my messages."),
-                        "You can run, you can hide. Spongebot always follows."]
+            edit_messages = [f"You think you're so clever, deleting your message.",
+                            f"Did you really think deleting your message would save you?",
+                            f"Yeah you better take that back.",
+                            mock_string(f"My name is {message.author.name} and I delete my messages."),
+                            f"You can run, you can hide. Spongebot always follows.",
+                            f"Hey {message.author.name}! I think you dropped this:"]
 
-        chosen_message = random.choice(edit_messages)
+            chosen_message = random.choice(edit_messages)
 
-        await spongebot_response.edit(content=chosen_message)
-        logger.info("Mocking Message changed to ('" + chosen_message + "')")
+            chosen_message += f"\nDeleted Message by {message.author.name}: *{message.content}*"
+
+            await spongebot_response.edit(content=chosen_message)
+            logger.info("Mocking Message changed to ('" + chosen_message + "')")
 
 
 # Takes in a string and mocks it

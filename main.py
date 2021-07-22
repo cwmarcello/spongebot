@@ -30,7 +30,7 @@ async def on_message(message):
 
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
-        if message.content != '' and random.random() < 0.2:      
+        if message.content != '' and random.random() < 0.01 * len(content):      
             logger.info("Detected mockable message from user: " + message.author.name)
             mocked_message = mock_string(message.content)
 

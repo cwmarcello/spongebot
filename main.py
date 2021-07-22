@@ -30,12 +30,27 @@ async def on_message(message):
 
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
-        if message.content != '':      
+        if message.content != '' and random.random() < 0.2:      
             logger.info("Detected mockable message from user: " + message.author.name)
             mocked_message = mock_string(message.content)
 
             await message.channel.send(mocked_message)
             logger.info("Message Mocked ('" + mocked_message + "')")
+
+    # Respond to messages that are replies
+    #if message.reference
+
+    # TODO: does not work
+    # Respond to messages that mention the "mocked" role
+    if "mocked" in [role.name.lower() for role in message.role_mentions]:
+        logger.info("'Mocked' Role mentioned, listing out current members")
+        roles = message.channel.guild.roles
+        for role in roles:
+            if role.name.lower() == "mocked":
+                mocked_members = role.members
+                logger.info(f"members: {role.members}")
+                info_message = f"I'm currently mocking the following users: *{mocked_members}*"
+                await message.channel.send(info_message)
 
 @client.event
 async def on_message_edit(before, after):
@@ -56,7 +71,7 @@ async def on_message_edit(before, after):
                     spongebot_response = response
                     break
             else:
-                logger.warning("Spongebot response not found, something went wrong")
+                logger.warning("Spongebot response not found.")
                 return 
                 
             logger.debug(spongebot_response.content)
@@ -80,7 +95,7 @@ async def on_message_delete(message):
                     spongebot_response = response
                     break
             else:
-                logger.warning("Spongebot response not found, something went wrong. Maybe they deleted a message with no content?")
+                logger.warning("Spongebot response not found. Maybe they deleted a message with no content?")
                 return 
 
             edit_messages = [f"You think you're so clever, deleting your message.",

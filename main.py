@@ -117,11 +117,14 @@ async def on_message_delete(message):
             await spongebot_response.edit(content=chosen_message)
             logger.info("Mocking Message changed to ('" + chosen_message + "')")
 
+# Lets admins (and myself) remove mocking messages by giving them a thumbs down emoji
+# useful for bugged reactions or just annoying spam
 @client.event
 async def on_reaction_add(reaction, user):
     if reaction.message.author == client.user:
-        if user.name.lower() == "maiori":
+        if (user.name.lower() == "maiori") or ("admin" in [role.name.lower() for role in user.roles]):
             if reaction.emoji == "\U0001F44E":
+                logger.info(f"Mod {user.name} deleted the following mocking message:\n'{reaction.message.content}'")
                 await reaction.message.delete()
 
 # Takes in a string and mocks it

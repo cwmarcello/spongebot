@@ -28,6 +28,22 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    # Respond to mentions of the spongebot role
+    for role in message.role_mentions:
+        if "spongebot" in role.name.lower():
+            logger.info(f"Role {role.name.lower()} mentioned, responding")
+            response = create_response_to_mention(message)
+            await message.channel.send(response, reference=message)
+            return
+
+    # Respond to mentions of the spongebot user
+    for user in message.mentions:
+        if "spongebot" in user.name.lower():
+            logger.info(f"User {user.name.lower()} mentioned, responding")
+            response = create_response_to_mention(message)
+            await message.channel.send(response, reference=message)
+            return
+
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
         if message.content != '':
@@ -38,21 +54,6 @@ async def on_message(message):
 
                 await message.channel.send(mocked_message)
                 logger.info("Message Mocked ('" + mocked_message + "')")
-
-    # Respond to messages that are replies
-    #if message.reference
-
-    # TODO: does not work
-    # Respond to messages that mention the "mocked" role
-    if "mocked" in [role.name.lower() for role in message.role_mentions]:
-        logger.info("'Mocked' Role mentioned, listing out current members")
-        roles = message.channel.guild.roles
-        for role in roles:
-            if role.name.lower() == "mocked":
-                mocked_members = role.members
-                logger.info(f"members: {role.members}")
-                info_message = f"I'm currently mocking the following users: *{mocked_members}*"
-                await message.channel.send(info_message)
 
 @client.event
 async def on_message_edit(before, after):
@@ -142,5 +143,23 @@ def mock_string(str_to_mock: str):
     mocked_str = mocked_str.join(mocked_str_array)
     logger.debug(mocked_str)
     return mocked_str
+
+# Responds to a mention of the bot
+def create_response_to_mention(message):
+    if "mocked" in [role.name.lower() for role in message.author.roles]:
+        responses = [
+            "The fuck did you just say about me you tartar sauce chugging barnacle hugger?",
+            "I'll carve you into pieces and serve you as krabby patty meat",
+            "Get back to flirting with a computer like the plankton wannabee you are",
+            "The Spongebot finds your attempts at communication pitiful",
+            "cry some more",
+            "you're as ugly as the hash-slinging slasher with none of the charm"
+        ]
+    else:
+        responses = [
+            "I'm ready, I'm ready!", "Order up!", "Aye-aye, Captain!", "No problemo.", "Hello There."
+        ]
+    response = "***" + random.choice(responses) + "***"
+    return response
 
 client.run(os.getenv('TOKEN'))

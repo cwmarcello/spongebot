@@ -46,3 +46,14 @@ installs python packages to the virtualenv:
 sudo apt install python3 python3-pip
 python3 -m pip install -U discord.py python-dotenv
 ```
+
+## Running the bot:
+
+```bash
+python3 main.py
+```
+
+## Configuring the bot in Discord
+
+The bot will automatically mock anyone with the "mocked" role. You will have to create and manage this role yourself.
+

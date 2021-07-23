@@ -47,7 +47,7 @@ async def on_message(message):
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
         if message.content != '':
-            link_strings = ["www.", ".html", ".gif", ".com"]
+            link_strings = ["www.", ".html", ".gif", ".com", ".org", ".net"]
             if not any(x in message.content for x in link_strings):
                 logger.info(0.01*len(message.content))
                 if random.random() < (0.01 * len(message.content)):
@@ -117,6 +117,12 @@ async def on_message_delete(message):
             await spongebot_response.edit(content=chosen_message)
             logger.info("Mocking Message changed to ('" + chosen_message + "')")
 
+@client.event
+async def on_reaction_add(reaction, user):
+    if reaction.message.author == client.user:
+        if user.name.lower() == "maiori":
+            if reaction.emoji == "\U0001F44E":
+                await reaction.message.delete()
 
 # Takes in a string and mocks it
 def mock_string(str_to_mock: str):
@@ -159,7 +165,8 @@ def create_response_to_mention(message):
         ]
     else:
         responses = [
-            "I'm ready, I'm ready!", "Order up!", "Aye-aye, Captain!", "No problemo.", "Hello There."
+            "I'm ready, I'm ready!", "Order up!", "Aye-aye, Captain!", "No problemo.", "Hello There.",
+            "You called?", "Sup?", "'sah dude" 
         ]
     response = "***" + random.choice(responses) + "***"
     return response

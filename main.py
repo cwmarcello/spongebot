@@ -47,13 +47,15 @@ async def on_message(message):
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
         if message.content != '':
-            logger.info(0.01*len(message.content))
-            if random.random() < (0.01 * len(message.content)):
-                logger.info("Detected mockable message from user: " + message.author.name)
-                mocked_message = mock_string(message.content)
+            link_strings = ["www.", ".html", ".gif", ".com"]
+            if not any(x in message.content for x in link_strings):
+                logger.info(0.01*len(message.content))
+                if random.random() < (0.01 * len(message.content)):
+                    logger.info("Detected mockable message from user: " + message.author.name)
+                    mocked_message = mock_string(message.content)
 
-                await message.channel.send(mocked_message)
-                logger.info("Message Mocked ('" + mocked_message + "')")
+                    await message.channel.send(mocked_message)
+                    logger.info("Message Mocked ('" + mocked_message + "')")
 
 @client.event
 async def on_message_edit(before, after):

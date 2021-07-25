@@ -3,7 +3,7 @@ Description=Runs the spongebot discord bot
 
 [Service]
 WorkingDirectory=/home/ubuntu/spongebot
-ExecStart=/usr/bin/python3 /home/ubuntu/spongebot/main.py
+ExecStart=/usr/bin/python3 /home/ubuntu/spongebot/spongebot.py
 User=ubuntu
 
 [Install]

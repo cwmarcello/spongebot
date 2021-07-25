@@ -14,7 +14,7 @@ client = discord.Client()
 # Logging config
 logger = logging.getLogger('discord')
 logger.setLevel(logging.INFO)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler = logging.FileHandler(filename='spongebot.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
@@ -47,8 +47,9 @@ async def on_message(message):
     # Check if a user has the "mocked" role and if so respond
     if "mocked" in [role.name.lower() for role in message.author.roles]:
         if message.content != '':
-            link_strings = ["www.", ".html", ".gif", ".com", ".org", ".net"]
-            if not any(x in message.content for x in link_strings):
+            # blacklist link strings and animated emojis to prevent bad mocks
+            blacklist_strings = ["www.", ".html", ".gif", ".com", ".org", ".net", "<a:"]
+            if not any(x in message.content for x in blacklist_strings):
                 logger.info(0.01*len(message.content))
                 if random.random() < (0.01 * len(message.content)):
                     logger.info("Detected mockable message from user: " + message.author.name)
@@ -166,12 +167,22 @@ def create_response_to_mention(message):
             "cry some more",
             "you're as ugly as the hash-slinging slasher with none of the charm"
         ]
+        response = ("***" + random.choice(responses) + "***")
     else:
+        '''
         responses = [
-            "I'm ready, I'm ready!", "Order up!", "Aye-aye, Captain!", "No problemo.", "Hello There.",
-            "You called?", "Sup?", "'sah dude" 
+            "I'm ready, I'm ready!", "Order up!", "Aye-aye, Captain!", "No problemo.", "***hello there***",
+            "You called?", "Sup?", "'sah dude", "\U0001F609", "\U0001F618",
+            "<:StAlLoNeBoB:615204461459275818>", "<:CaVeBoB:615205197056049162>"
         ]
-    response = "***" + random.choice(responses) + "***"
+        '''
+        responses = [
+            "\U0001F609", "\U0001F618", "<:StAlLoNeBoB:615204461459275818>",
+            "<:CaVeBoB:615205197056049162>", "<:SmUgBOb:615202190100791306>", "<:SmiRK:856927495185367073>"
+        ]
+        responses.extend(message.guild.emojis)
+        response = random.choice(responses)
     return response
+
 
 client.run(os.getenv('TOKEN'))

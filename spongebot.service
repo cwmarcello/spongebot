@@ -1,0 +1,10 @@
+[Unit]
+Description=Runs the spongebot discord bot
+
+[Service]
+WorkingDirectory=/home/ubuntu/spongebot
+ExecStart=/usr/bin/python3 /home/ubuntu/spongebot/main.py
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target

@@ -3,6 +3,7 @@ Spongebot for Discord
 
 Takes messages from anyone in the "Mocked" role and responds with the same text in a mocking spongebob-style.
 
+## Env Variables
 
 Note that to use spongebot you *must* have a .env file with the security token in it, of the format:
 

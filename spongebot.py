@@ -1,12 +1,12 @@
 # Takes messages from anyone in the "Mocked" role and responds with the same text in
 # a mocking spongebob-style.
 
-import discord
-from dotenv import load_dotenv
 import os
 import random
 import logging
-import time
+
+import discord
+from dotenv import load_dotenv
 
 load_dotenv() # loads in environment variables from .env (for secrets)
 client = discord.Client()
@@ -123,7 +123,7 @@ async def on_message_delete(message):
 @client.event
 async def on_reaction_add(reaction, user):
     if reaction.message.author == client.user:
-        if (user.name.lower() == "maiori") or ("admin" in [role.name.lower() for role in user.roles]):
+        if (user.name.lower() == os.getenv('USERNAME')) or ("admin" in [role.name.lower() for role in user.roles]):
             if reaction.emoji == "\U0001F44E":
                 logger.info(f"Mod {user.name} deleted the following mocking message:\n'{reaction.message.content}'")
                 await reaction.message.delete()

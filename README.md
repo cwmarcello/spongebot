@@ -51,7 +51,7 @@ python3 -m pip install -U discord.py python-dotenv
 ## Running the bot:
 
 ```bash
-python3 main.py
+python3 spongebot.py
 ```
 
 ## Configuring the bot in Discord
